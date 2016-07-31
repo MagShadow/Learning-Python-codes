@@ -1,7 +1,39 @@
+#test Queue
+from multiprocessing import Queue,Process
+import os,time,random
+
+def write(q):
+    print("Process to write: %s" % os.getpid())
+    for value in ['A','B','C']:
+        print('Put %s to queue.' % value)
+        q.put(value)
+        print(value,'WB:',time.time())
+        time.sleep(random.random())
+        print(value,'WE:',time.time())
+
+def read(q):
+    print('Process to read: %s' % os.getpid())
+    while True:
+        value=q.get(True)
+        print('Get %s from queue.' % value)
+        print(value,'RE:',time.time())
+
+if __name__=='__main__':
+    q=Queue()
+    pw=Process(target=write,args=(q,))
+    pr=Process(target=read,args=(q,))
+    pw.start()
+    pr.start()
+    pw.join()
+    pr.terminate()
 #test subprocess
+'''
 import subprocess
-r=subprocess.call(['ipython','--version'])
-print('Exit code:',r)
+p=subprocess.Popen(['nslookup'],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+output,err=p.communicate(b'set q=mx\npython.org\nexit\n')
+print(output.decode('gbk'))
+print('Exit code:',p.returncode)
+'''
 #test thread and process
 '''
 from multiprocessing import Process
